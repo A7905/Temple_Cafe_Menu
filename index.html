@@ -1,313 +1,1060 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Luxury Restaurant Menu</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Temple Café · Radisson Khajuraho</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Cinzel:wght@400;500;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #C9A84C;
+    --gold-light: #E8C97A;
+    --gold-dark: #8B6914;
+    --navy: #0B1120;
+    --navy-mid: #111827;
+    --navy-light: #1a2640;
+    --cream: #F5EDD6;
+    --cream-light: #FAF5E8;
+    --white: #FFFFFF;
+    --veg: #1a7a2e;
+    --nonveg: #a31c1c;
+    --signature: #8B6914;
+    --healthy: #2d7a3a;
+    --text-light: #c8b99a;
+    --section-bg-dark: #0e1623;
+    --section-bg-veg: #0d1f12;
+  }
 
-  <style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
-    *{
-      margin:0;
-      padding:0;
-      box-sizing:border-box;
-      font-family:"Segoe UI",sans-serif;
-    }
+  html, body {
+    height: 100%;
+    background: var(--navy);
+    font-family: 'Lato', sans-serif;
+    color: var(--cream);
+    overflow: hidden;
+  }
 
-    body{
-      background:#000;
-      height:100vh;
-      overflow:hidden;
-    }
+  /* ── SLIDER WRAPPER ─────────────────────────────── */
+  #slider {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.55s cubic-bezier(0.77, 0, 0.18, 1);
+    will-change: transform;
+  }
 
-    .menu-container{
-      width:100%;
-      height:100vh;
-      position:relative;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      background:#000;
-    }
+  .page {
+    min-width: 100vw;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    position: relative;
+    -webkit-overflow-scrolling: touch;
+  }
 
-    /* =========================
-       IMAGE FULL SCREEN
-    ========================== */
+  /* Scrollbar */
+  .page::-webkit-scrollbar { width: 3px; }
+  .page::-webkit-scrollbar-track { background: var(--navy); }
+  .page::-webkit-scrollbar-thumb { background: var(--gold-dark); border-radius: 4px; }
 
-    .menu-image{
-      width:100%;
-      height:90vh;
-      object-fit:contain;
-      transition:opacity 0.3s ease;
-      user-select:none;
-      -webkit-user-drag:none;
-    }
+  /* ── NAV DOTS ───────────────────────────────────── */
+  #nav-dots {
+    position: fixed;
+    bottom: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    z-index: 1000;
+    padding: 6px 14px;
+    background: rgba(11,17,32,0.7);
+    border-radius: 20px;
+    border: 1px solid rgba(201,168,76,0.2);
+    backdrop-filter: blur(8px);
+  }
+  .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: rgba(201,168,76,0.35);
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .dot.active { background: var(--gold); width: 18px; border-radius: 3px; }
 
-    /* =========================
-       TOP PAGE COUNTER
-    ========================== */
+  /* ── ARROW BUTTONS ──────────────────────────────── */
+  .arrow {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 999;
+    background: rgba(11,17,32,0.75);
+    border: 1px solid rgba(201,168,76,0.4);
+    color: var(--gold);
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    font-size: 16px;
+    backdrop-filter: blur(8px);
+    transition: all 0.25s;
+    user-select: none;
+  }
+  .arrow:hover { background: rgba(201,168,76,0.15); border-color: var(--gold); }
+  .arrow:active { transform: translateY(-50%) scale(0.93); }
+  #arrow-left { left: 10px; }
+  #arrow-right { right: 10px; }
 
-    .top-bar{
-      position:absolute;
-      top:18px;
-      left:50%;
-      transform:translateX(-50%);
-      background:rgba(0,0,0,0.45);
-      backdrop-filter:blur(10px);
-      color:white;
-      padding:10px 22px;
-      border-radius:50px;
-      font-size:15px;
-      letter-spacing:0.5px;
-      z-index:10;
-      border:1px solid rgba(255,255,255,0.08);
-    }
+  /* ── PAGE COUNTER ───────────────────────────────── */
+  #page-counter {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 999;
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--gold);
+    background: rgba(11,17,32,0.7);
+    border: 1px solid rgba(201,168,76,0.2);
+    padding: 4px 10px;
+    border-radius: 20px;
+    backdrop-filter: blur(8px);
+  }
 
-    /* =========================
-       BOTTOM BUTTONS
-    ========================== */
+  /* ── COVER PAGE ─────────────────────────────────── */
+  .cover {
+    background: radial-gradient(ellipse at 30% 20%, #1a2640 0%, var(--navy) 60%);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    min-height: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+  .cover::before {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(circle at 10% 80%, rgba(201,168,76,0.05) 0%, transparent 50%),
+      radial-gradient(circle at 90% 20%, rgba(201,168,76,0.07) 0%, transparent 50%);
+  }
+  .cover-border {
+    position: absolute;
+    inset: 16px;
+    border: 1px solid rgba(201,168,76,0.35);
+    border-radius: 2px;
+    pointer-events: none;
+  }
+  .cover-border::before {
+    content: '';
+    position: absolute; inset: 5px;
+    border: 1px solid rgba(201,168,76,0.15);
+    border-radius: 2px;
+  }
+  /* Corner ornaments */
+  .corner { position: absolute; width: 30px; height: 30px; }
+  .corner.tl { top: 20px; left: 20px; border-top: 2px solid var(--gold); border-left: 2px solid var(--gold); }
+  .corner.tr { top: 20px; right: 20px; border-top: 2px solid var(--gold); border-right: 2px solid var(--gold); }
+  .corner.bl { bottom: 20px; left: 20px; border-bottom: 2px solid var(--gold); border-left: 2px solid var(--gold); }
+  .corner.br { bottom: 20px; right: 20px; border-bottom: 2px solid var(--gold); border-right: 2px solid var(--gold); }
 
-    .controls{
-      position:absolute;
-      bottom:25px;
-      width:100%;
-      display:flex;
-      justify-content:center;
-      gap:18px;
-      z-index:10;
-    }
+  .cover-diamond {
+    color: var(--gold); font-size: 14px; letter-spacing: 4px;
+    margin-bottom: 28px; opacity: 0.8;
+  }
+  .cover-title {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(32px, 10vw, 52px);
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    color: var(--white);
+    text-align: center;
+    line-height: 1;
+    text-shadow: 0 0 40px rgba(201,168,76,0.3);
+  }
+  .cover-subtitle {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(10px, 3vw, 14px);
+    letter-spacing: 0.35em;
+    color: var(--gold);
+    margin-top: 10px;
+    text-align: center;
+  }
+  .cover-rule {
+    width: 120px; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 24px auto;
+  }
+  .cover-tagline {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: clamp(13px, 3.5vw, 16px);
+    color: var(--text-light);
+    letter-spacing: 0.08em;
+    text-align: center;
+    margin-bottom: 6px;
+  }
+  .cover-year {
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    color: var(--gold-dark);
+    text-align: center;
+  }
+  .cover-hours {
+    font-family: 'Lato', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: var(--text-light);
+    text-align: center;
+    margin-top: 28px;
+    text-transform: uppercase;
+  }
 
-    .btn{
-      padding:12px 26px;
-      border-radius:50px;
-      border:1px solid rgba(255,255,255,0.15);
-      background:rgba(255,255,255,0.08);
-      backdrop-filter:blur(8px);
-      color:white;
-      font-size:15px;
-      cursor:pointer;
-      transition:0.25s ease;
-    }
+  /* ── LEGEND ─────────────────────────────────────── */
+  .legend-row {
+    display: flex; gap: 18px; flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  .legend-item {
+    display: flex; align-items: center; gap: 7px;
+    font-family: 'Lato', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    color: var(--text-light);
+  }
 
-    .btn:hover{
-      background:rgba(255,255,255,0.18);
-      transform:translateY(-2px);
-    }
+  /* ── MENU PAGES ─────────────────────────────────── */
+  .menu-page {
+    padding: 0 0 80px 0;
+    min-height: 100%;
+  }
 
-    /* =========================
-       MOBILE
-    ========================== */
+  .section-header {
+    padding: 36px 24px 24px;
+    text-align: center;
+    position: relative;
+  }
+  .section-header::before {
+    content: '◆';
+    display: block;
+    color: var(--gold);
+    font-size: 10px;
+    letter-spacing: 4px;
+    margin-bottom: 14px;
+    opacity: 0.7;
+  }
+  .section-title {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(18px, 5.5vw, 26px);
+    font-weight: 600;
+    letter-spacing: 0.25em;
+    color: var(--gold);
+    text-transform: uppercase;
+  }
+  .section-divider {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(201,168,76,0.5), transparent);
+    margin: 12px 0 4px;
+  }
+  .section-sub {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: clamp(11px, 3vw, 13px);
+    color: var(--text-light);
+    letter-spacing: 0.1em;
+    margin-top: 6px;
+  }
 
-    @media(max-width:768px){
+  /* ── CATEGORY LABEL ─────────────────────────────── */
+  .cat-label {
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    color: var(--gold-dark);
+    text-transform: uppercase;
+    padding: 12px 24px 6px;
+    border-bottom: 1px solid rgba(201,168,76,0.1);
+    margin-bottom: 2px;
+  }
 
-      .menu-image{
-        height:92vh;
-      }
+  /* ── MENU ITEM ──────────────────────────────────── */
+  .menu-item {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 14px 22px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    transition: background 0.2s;
+    position: relative;
+  }
+  .menu-item:active { background: rgba(201,168,76,0.04); }
 
-      .btn{
-        padding:10px 18px;
-        font-size:14px;
-      }
+  .item-left { flex: 1; }
 
-      .top-bar{
-        font-size:13px;
-        padding:8px 18px;
-      }
+  .item-name-row {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    flex-wrap: wrap;
+  }
+  .item-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(15px, 4.2vw, 18px);
+    font-weight: 600;
+    color: var(--cream);
+    letter-spacing: 0.02em;
+    line-height: 1.2;
+  }
 
-    }
+  /* Diet icons */
+  .tag-veg {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 14px; height: 14px;
+    border: 1.5px solid var(--veg);
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+  .tag-veg::after {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--veg);
+  }
+  .tag-nonveg {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 14px; height: 14px;
+    border: 1.5px solid var(--nonveg);
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+  .tag-nonveg::after {
+    content: '';
+    width: 0; height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-bottom: 7px solid var(--nonveg);
+  }
+  .tag-signature {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 14px; height: 14px;
+    flex-shrink: 0;
+    font-size: 10px;
+    color: var(--gold);
+  }
+  .tag-healthy {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 20px; height: 14px;
+    border-radius: 10px;
+    background: #2d7a3a;
+    font-size: 7px;
+    color: white;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    flex-shrink: 0;
+    font-family: 'Lato', sans-serif;
+    padding: 0 2px;
+  }
 
-  </style>
+  .item-meta {
+    font-family: 'Lato', sans-serif;
+    font-size: 10px;
+    color: rgba(200,185,154,0.5);
+    letter-spacing: 0.05em;
+    margin-top: 3px;
+    line-height: 1.4;
+  }
+  .item-desc {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: clamp(12px, 3.2vw, 14px);
+    color: var(--text-light);
+    margin-top: 5px;
+    line-height: 1.5;
+    opacity: 0.85;
+  }
+  .item-price {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(13px, 3.8vw, 15px);
+    color: var(--gold);
+    font-weight: 600;
+    flex-shrink: 0;
+    margin-top: 2px;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+  }
+
+  /* ── VEG PAGE THEME ─────────────────────────────── */
+  .veg-theme { background: var(--section-bg-veg); }
+  .veg-theme .section-title { color: #5cb85c; }
+  .veg-theme .section-divider {
+    background: linear-gradient(90deg, transparent, rgba(92,184,92,0.5), transparent);
+  }
+  .veg-theme .section-header::before { color: #5cb85c; }
+
+  /* ── PAGE BG ACCENTS ────────────────────────────── */
+  .page-accent {
+    position: absolute;
+    top: 0; right: 0;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(201,168,76,0.04) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  /* ── FOOTER NOTE ────────────────────────────────── */
+  .page-footer {
+    padding: 18px 24px;
+    text-align: center;
+    font-family: 'Lato', sans-serif;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    color: rgba(200,185,154,0.35);
+    text-transform: uppercase;
+    border-top: 1px solid rgba(201,168,76,0.1);
+  }
+
+  /* ── THANK YOU PAGE ─────────────────────────────── */
+  .thankyou {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    min-height: 100%;
+    text-align: center;
+    padding: 40px 30px;
+    background: radial-gradient(ellipse at 50% 30%, #1a2640 0%, var(--navy) 70%);
+    position: relative;
+    overflow: hidden;
+  }
+  .thankyou-diamond { color: var(--gold); font-size: 20px; margin-bottom: 24px; opacity: 0.8; }
+  .thankyou-heading {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: clamp(22px, 6vw, 32px);
+    color: var(--cream);
+    font-weight: 300;
+    margin-bottom: 12px;
+  }
+  .thankyou-sub {
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    margin-bottom: 30px;
+  }
+  .thankyou-rule {
+    width: 80px; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 0 auto 28px;
+  }
+  .thankyou-hours {
+    font-family: 'Lato', sans-serif;
+    font-size: 11px;
+    color: var(--text-light);
+    line-height: 1.9;
+    letter-spacing: 0.08em;
+  }
+  .thankyou-hours strong { color: var(--gold); font-weight: 700; }
+  .thankyou-note {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 12px;
+    color: rgba(200,185,154,0.45);
+    margin-top: 28px;
+    line-height: 1.6;
+    max-width: 280px;
+  }
+  .radisson-badge {
+    margin-top: 40px;
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.4em;
+    color: var(--gold-dark);
+    border: 1px solid rgba(201,168,76,0.2);
+    padding: 8px 20px;
+    border-radius: 2px;
+  }
+
+  /* ── SWIPE HINT ─────────────────────────────────── */
+  .swipe-hint {
+    position: absolute;
+    bottom: 55px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Lato', sans-serif;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    color: rgba(201,168,76,0.45);
+    text-transform: uppercase;
+    white-space: nowrap;
+    animation: pulse 2.5s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:0.45} 50%{opacity:0.9} }
+
+  /* ── PRICE RANGE ────────────────────────────────── */
+  .item-price-range {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(11px, 3vw, 13px);
+    color: var(--gold);
+    flex-shrink: 0;
+    margin-top: 2px;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+  }
+
+  /* Responsive tweaks */
+  @media (min-width: 600px) {
+    .menu-item { padding: 16px 32px; }
+    .section-header { padding: 40px 32px 26px; }
+    .cat-label { padding: 14px 32px 8px; }
+  }
+</style>
 </head>
-
 <body>
 
-  <div class="menu-container">
+<!-- Fixed UI -->
+<div id="arrow-left" class="arrow" onclick="prevPage()">&#8592;</div>
+<div id="arrow-right" class="arrow" onclick="nextPage()">&#8594;</div>
+<div id="nav-dots"></div>
+<div id="page-counter"></div>
 
-    <!-- PAGE COUNTER -->
+<!-- SLIDER -->
+<div id="slider">
 
-    <div class="top-bar" id="pageCount">
-      Menu Page 1 / 19
+  <!-- ══ PAGE 0: COVER ══════════════════════════════ -->
+  <div class="page">
+    <div class="cover">
+      <div class="cover-border"></div>
+      <div class="corner tl"></div><div class="corner tr"></div>
+      <div class="corner bl"></div><div class="corner br"></div>
+
+      <div class="cover-diamond">◆</div>
+      <div class="cover-title">TEMPLE<br>CAFÉ</div>
+      <div class="cover-subtitle">RADISSON KHAJURAHO</div>
+      <div class="cover-rule"></div>
+      <div class="cover-tagline">Fine Dining Menu · 2026 – 2027</div>
+      <div class="cover-year">EST. KHAJURAHO · MADHYA PRADESH</div>
+      <div class="cover-hours">Served Daily · 12:00 hrs to 22:00 hrs</div>
+
+      <div class="legend-row">
+        <div class="legend-item"><span class="tag-nonveg"></span> Non-Veg</div>
+        <div class="legend-item"><span class="tag-veg"></span> Vegetarian</div>
+        <div class="legend-item"><span class="tag-signature">✦</span> Signature</div>
+        <div class="legend-item"><span class="tag-healthy">H</span> Healthier</div>
+      </div>
+
+      <div class="swipe-hint">← swipe to explore →</div>
     </div>
-
-    <!-- MENU IMAGE -->
-
-    <img 
-      id="menuImage"
-      class="menu-image"
-      src="page1.jpg"
-      alt="Restaurant Menu"
-    >
-
-    <!-- BUTTONS -->
-
-    <div class="controls">
-
-      <button class="btn" onclick="prevPage()">
-        ← Previous
-      </button>
-
-      <button class="btn" onclick="nextPage()">
-        Next →
-      </button>
-
-    </div>
-
   </div>
 
-  <script>
+  <!-- ══ PAGE 1: INITIATIONS ════════════════════════ -->
+  <div class="page">
+    <div class="menu-page" style="background: var(--navy-mid);">
+      <div class="page-accent"></div>
+      <div class="section-header">
+        <div class="section-title">Initiations</div>
+        <div class="section-divider"></div>
+        <div class="section-sub">Fresh Salads &amp; Starters · Served 12:00 hrs – 22:00 hrs</div>
+      </div>
 
-    // =========================
-    // TOTAL IMAGES
-    // =========================
+      <div class="menu-item">
+        <div class="item-left">
+          <div class="item-name-row"><span class="item-name">Chicken Caesar Salad</span><span class="tag-nonveg"></span></div>
+          <div class="item-meta">160 gm · 460 kcal</div>
+          <div class="item-desc">Iceberg lettuce with chicken, capers, parmesan cheese and croutons in caesar dressing</div>
+        </div>
+        <div class="item-price">₹675</div>
+      </div>
 
-    const totalPages = 19;
+      <div class="menu-item">
+        <div class="item-left">
+          <div class="item-name-row"><span class="item-name">Chicken Tikka Chat</span><span class="tag-nonveg"></span></div>
+          <div class="item-meta">160 gm · 219 kcal</div>
+          <div class="item-desc">Boneless char grilled strips of chicken with onion and tomato in lemon dressing</div>
+        </div>
+        <div class="item-price">₹650</div>
+      </div>
 
-    let currentPage = 1;
+      <div class="menu-item">
+        <div class="item-left">
+          <div class="item-name-row"><span class="item-name">Greek Salad</span><span class="tag-veg"></span></div>
+          <div class="item-meta">140 gm · 312 kcal</div>
+          <div class="item-desc">Bell peppers, green capsicums, lettuce, onions, capers and olives in vinaigrette dressing with garlic bread</div>
+        </div>
+        <div class="item-price">₹550</div>
+      </div>
 
-    const image = document.getElementById("menuImage");
-    const pageCount = document.getElementById("pageCount");
+      <div class="menu-item">
+        <div class="item-left">
+          <div class="item-name-row"><span class="item-name">Apple &amp; Beetroot Salad</span><span class="tag-veg"></span><span class="tag-healthy">H</span></div>
+          <div class="item-meta">120 gm · 183 kcal</div>
+          <div class="item-desc">Slices of apple and beetroot with cheese in honey mustard dressing</div>
+        </div>
+        <div class="item-price">₹525</div>
+      </div>
 
-    // =========================
-    // UPDATE PAGE
-    // =========================
+      <div class="menu-item">
+        <div class="item-left">
+          <div class="item-name-row"><span class="item-name">Grilled Mediterranean Salad</span><span class="tag-veg"></span></div>
+          <div class="item-meta">160 gm · 180 kcal</div>
+          <div class="item-desc">Assorted grilled vegetables with cucumber, lettuce, cheese, tossed with herb vinaigrette</div>
+        </div>
+        <div class="item-price">₹525</div>
+      </div>
 
-    function updatePage(){
+      <div class="menu-item">
+        <div class="item-left">
+          <div class="item-name-row"><span class="item-name">Tawa Aloo Chaat</span><span class="tag-veg"></span></div>
+          <div class="item-meta">160 gm · 200 kcal</div>
+          <div class="item-desc">Crispy deep fried potato mix with tangy dressing, garnished with yoghurt</div>
+        </div>
+        <div class="item-price">₹425</div>
+      </div>
 
-      image.style.opacity = 0;
+      <div class="menu-item">
+        <div class="item-left">
+          <div class="item-name-row"><span class="item-name">Garden Green Salad</span><span class="tag-veg"></span></div>
+          <div class="item-meta">120 gm · 18 kcal</div>
+          <div class="item-desc">Fresh seasonal garden greens with light dressing</div>
+        </div>
+        <div class="item-price">₹425</div>
+      </div>
 
-      setTimeout(() => {
+      <div class="page-footer">Temple Café · Radisson Khajuraho · All prices inclusive of GST · No service charge</div>
+    </div>
+  </div>
 
-        image.src = `page${currentPage}.jpg`;
+  <!-- ══ PAGE 2: SOUPS ══════════════════════════════ -->
+  <div class="page">
+    <div class="menu-page" style="background: var(--section-bg-dark);">
+      <div class="section-header">
+        <div class="section-title">From the Soup Tureen</div>
+        <div class="section-divider"></div>
+        <div class="section-sub">Artisanal Broths &amp; Velvety Potages · Served 12:00 hrs – 22:00 hrs</div>
+      </div>
 
-        pageCount.innerText =
-          `Menu Page ${currentPage} / ${totalPages}`;
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">St. Germain</span><span class="tag-veg"></span></div><div class="item-meta">180 ml · 103 kcal</div><div class="item-desc">Classic French green pea soup</div></div><div class="item-price">₹525</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Tomato Basil Soup</span><span class="tag-veg"></span></div><div class="item-meta">180 ml · 150 kcal</div><div class="item-desc">Slow-simmered tomato with fresh basil</div></div><div class="item-price">₹525</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Minestrone Soup</span><span class="tag-veg"></span></div><div class="item-meta">180 ml · 143 kcal</div><div class="item-desc">Italian soup with exotic vegetables and pasta</div></div><div class="item-price">₹525</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Cream of Chicken Soup</span><span class="tag-nonveg"></span></div><div class="item-meta">180 ml · 139 kcal</div><div class="item-desc">Rich cream-based chicken soup</div></div><div class="item-price">₹550</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Mushroom Cappuccino</span><span class="tag-veg"></span></div><div class="item-meta">180 ml · 167 kcal</div><div class="item-desc">Velvety cream of mushroom with a cappuccino-style finish</div></div><div class="item-price">₹525</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Manchow Soup — Chicken</span><span class="tag-nonveg"></span></div><div class="item-meta">180 ml · 140 kcal</div><div class="item-desc">Indo-Chinese style thick chicken soup</div></div><div class="item-price">₹550</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Manchow Soup — Vegetable</span><span class="tag-veg"></span></div><div class="item-meta">180 ml · 98 kcal</div><div class="item-desc">Indo-Chinese style thick vegetable soup</div></div><div class="item-price">₹525</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Hot &amp; Sour Soup — Chicken</span><span class="tag-nonveg"></span></div><div class="item-meta">180 ml · 74 kcal</div><div class="item-desc">Classic tangy hot &amp; sour chicken broth</div></div><div class="item-price">₹550</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Hot &amp; Sour Soup — Vegetable</span><span class="tag-veg"></span></div><div class="item-meta">180 ml · 44 kcal</div><div class="item-desc">Classic tangy hot &amp; sour vegetable broth</div></div><div class="item-price">₹525</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Sweet Corn Soup — Chicken</span><span class="tag-nonveg"></span></div><div class="item-meta">180 ml · 110 kcal</div><div class="item-desc">Sweet corn with tender chicken</div></div><div class="item-price">₹550</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Sweet Corn Soup — Vegetable</span><span class="tag-veg"></span></div><div class="item-meta">180 ml · 78 kcal</div><div class="item-desc">Sweet corn with garden vegetables</div></div><div class="item-price">₹525</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Mulligatawny Soup</span><span class="tag-veg"></span></div><div class="item-meta">180 ml · 105 kcal</div><div class="item-desc">Curry flavoured lentil soup garnished with rice and finished with lemon</div></div><div class="item-price">₹570</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Bhutte ka Shorba</span><span class="tag-veg"></span></div><div class="item-meta">180 ml · 203 kcal</div><div class="item-desc">Thick soup of fresh assorted vegetables, fresh corn and Indian spices</div></div><div class="item-price">₹570</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Khao-Suey — Veg / Chicken</span><span class="tag-veg"></span></div><div class="item-meta">180 ml · 203 kcal</div><div class="item-desc">Burmese noodle in creamy coconut milk curry broth</div></div><div class="item-price-range">₹570 / 590</div></div>
 
-        image.style.opacity = 1;
+      <div class="page-footer">Temple Café · Radisson Khajuraho · All prices inclusive of GST · No service charge</div>
+    </div>
+  </div>
 
-      },150);
+  <!-- ══ PAGE 3: SANDWICHES & BURGERS ══════════════ -->
+  <div class="page">
+    <div class="menu-page" style="background: var(--navy-light);">
+      <div class="section-header">
+        <div class="section-title">Sandwiches &amp; Burgers</div>
+        <div class="section-divider"></div>
+        <div class="section-sub">Artisan Breads · Premium Fillings · Classic Comfort</div>
+      </div>
 
-    }
+      <div class="cat-label">Plain Sandwich</div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Sandwich — Plain</span><span class="tag-veg"></span></div><div class="item-meta">280 gm · 545 kcal</div><div class="item-desc">Tomato, cucumber, cheese on fresh bread</div></div><div class="item-price">₹725</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Sandwich — Chicken, Cheese, Ham</span><span class="tag-nonveg"></span></div><div class="item-meta">280 gm · 1030 kcal</div><div class="item-desc">Grilled or toasted — any two filling: chicken, cheese, ham / tomato, cucumber, cheese</div></div><div class="item-price">₹750</div></div>
 
-    // =========================
-    // NEXT PAGE
-    // =========================
+      <div class="cat-label">Focaccia Sandwich</div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Focaccia — Tomato, Cucumber, Cheese</span><span class="tag-veg"></span></div><div class="item-meta">280 gm · 1030 kcal</div><div class="item-desc">Classic vegetarian filling on freshly baked focaccia</div></div><div class="item-price">₹725</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Focaccia — Chicken, Cheese, Ham</span><span class="tag-nonveg"></span></div><div class="item-meta">280 gm · 1030 kcal</div><div class="item-desc">Premium chicken filling on freshly baked focaccia</div></div><div class="item-price">₹750</div></div>
 
-    function nextPage(){
+      <div class="cat-label">Foot Long</div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Grilled Chicken Foot Long</span><span class="tag-nonveg"></span></div><div class="item-meta">280 gm · 1010 kcal</div><div class="item-desc">Char grilled chicken breast layered between our special loaf</div></div><div class="item-price">₹750</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Paneer Tikka Foot Long</span><span class="tag-veg"></span></div><div class="item-meta">280 gm · 252 kcal</div><div class="item-desc">Spicy mix of cottage cheese and vegetables sandwiched between the loaf</div></div><div class="item-price">₹725</div></div>
 
-      // Stops at page15.jpg
+      <div class="cat-label">Club House</div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Radisson Club House — Chicken</span><span class="tag-nonveg"></span></div><div class="item-meta">340 gm · 252 kcal</div><div class="item-desc">Grilled chicken, tomato and eggs</div></div><div class="item-price">₹725</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Radisson Club House — Veg</span><span class="tag-veg"></span></div><div class="item-meta">340 gm · 252 kcal</div><div class="item-desc">Tomatoes, cheese and cucumber</div></div><div class="item-price">₹750</div></div>
 
-      if(currentPage < totalPages){
+      <div class="page-footer">Temple Café · Radisson Khajuraho · All prices inclusive of GST · No service charge</div>
+    </div>
+  </div>
 
-        currentPage++;
-        updatePage();
+  <!-- ══ PAGE 4: BURGERS & PIZZA ════════════════════ -->
+  <div class="page">
+    <div class="menu-page" style="background: var(--navy-mid);">
+      <div class="section-header">
+        <div class="section-title">Burgers &amp; Pizza</div>
+        <div class="section-divider"></div>
+        <div class="section-sub">Premium Patties · Artisan Pizzas · Stone-Baked Delight</div>
+      </div>
 
-      }
+      <div class="cat-label">Burgers</div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Veg Burger</span><span class="tag-veg"></span></div><div class="item-meta">350 gm · 252 kcal</div><div class="item-desc">Burger bun stuffed with veg patties, vegetables and lettuce</div></div><div class="item-price">₹600</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Veg Burger (Large)</span><span class="tag-veg"></span></div><div class="item-meta">340 gm · 1130 kcal</div><div class="item-desc">Full-size burger bun stuffed with veg patties, vegetables and lettuce</div></div><div class="item-price">₹650</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Chicken Burger</span><span class="tag-nonveg"></span></div><div class="item-meta">350 gm · 239 kcal</div><div class="item-desc">Burger bun stuffed with chicken patties and lettuce</div></div><div class="item-price">₹650</div></div>
 
-    }
+      <div class="cat-label">Pizza</div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Choice of Pizza — Vegetarian</span><span class="tag-veg"></span></div><div class="item-meta">380 gm · 856 kcal</div><div class="item-desc">Parmesan, tomato, bell pepper, mushroom, sundried tomato, onion, paneer</div></div><div class="item-price">₹670</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Choice of Pizza — Non-Vegetarian</span><span class="tag-nonveg"></span></div><div class="item-meta">380 gm · 2850 kcal</div><div class="item-desc">Parmesan, pepperoni, bacon, chicken pizza</div></div><div class="item-price">₹800</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Grilled Chicken Pizza</span><span class="tag-nonveg"></span></div><div class="item-meta">280 gm · 1010 kcal</div><div class="item-desc">Succulent char grilled chicken breast on our special focaccia base</div></div><div class="item-price">₹800</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Paneer Tikka Pizza</span><span class="tag-veg"></span></div><div class="item-meta">280 gm · 252 kcal</div><div class="item-desc">Spicy mix of cottage cheese and vegetables on focaccia base</div></div><div class="item-price">₹670</div></div>
 
-    // =========================
-    // PREVIOUS PAGE
-    // =========================
+      <div class="page-footer">Temple Café · Radisson Khajuraho · All prices inclusive of GST · No service charge</div>
+    </div>
+  </div>
 
-    function prevPage(){
+  <!-- ══ PAGE 5: INTERNATIONAL ══════════════════════ -->
+  <div class="page">
+    <div class="menu-page" style="background: var(--section-bg-dark);">
+      <div class="section-header">
+        <div class="section-title">International Selection</div>
+        <div class="section-divider"></div>
+        <div class="section-sub">Lunch &amp; Dinner · 12:00–15:00 | 19:00–22:30 hrs</div>
+      </div>
 
-      // Stops at page1.jpg
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Grilled Chicken</span><span class="tag-nonveg"></span><span class="tag-signature">✦</span></div><div class="item-meta">410 gm · 565 kcal</div><div class="item-desc">Herb marinated chicken breast, green peas mash and mushroom sauce</div></div><div class="item-price">₹850</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Chicken Stroganoff</span><span class="tag-nonveg"></span></div><div class="item-meta">410 gm · 525 kcal</div><div class="item-desc">Finger pieces of chicken with mushroom, green peas, rice and brown sauce</div></div><div class="item-price">₹875</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Chicken Kiev</span><span class="tag-nonveg"></span></div><div class="item-meta">410 gm · 715 kcal</div><div class="item-desc">Crumb fried chicken stuffed with herb garlic butter, served with rice and vegetables</div></div><div class="item-price">₹875</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Fish &amp; Chips</span><span class="tag-nonveg"></span></div><div class="item-meta">350 gm · 386 kcal</div><div class="item-desc">Crumb fried fish served with French fries and tartare sauce</div></div><div class="item-price">₹725</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Pan Seared Fish</span><span class="tag-nonveg"></span></div><div class="item-meta">380 gm · 460 kcal</div><div class="item-desc">With caper lemon butter sauce and mashed potato</div></div><div class="item-price">₹825</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Mezze Station</span><span class="tag-veg"></span></div><div class="item-meta">350 gm · 754 kcal</div><div class="item-desc">Hummus, babaganoush, labneh, fattoush, beetroot tzatziki served with pita breads</div></div><div class="item-price">₹850</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Potato Cheese Gnocchi</span><span class="tag-veg"></span></div><div class="item-meta">380 gm · 180 kcal</div><div class="item-desc">Grilled tikki of potato &amp; cheese and peppers on tomato sauce, topped with herbed concasse</div></div><div class="item-price">₹725</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Baked Eggplant Parmeggiano</span><span class="tag-veg"></span></div><div class="item-meta">440 gm · 313 kcal</div><div class="item-desc">Layered aubergines and tomato gratinated cheese served with calabrese sauce</div></div><div class="item-price">₹750</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Vegetable au Gratin</span><span class="tag-veg"></span></div><div class="item-meta">440 gm · 340 kcal</div><div class="item-desc">Assorted vegetables in white sauce, topped and baked with cheese</div></div><div class="item-price">₹750</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Chicken Lasagna</span><span class="tag-nonveg"></span></div><div class="item-meta">350 gm · 1815 kcal</div><div class="item-desc">Classic layered pasta with rich chicken filling</div></div><div class="item-price">₹750</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Vegetable Lasagna</span><span class="tag-veg"></span></div><div class="item-meta">350 gm · 1754 kcal</div><div class="item-desc">Layered pasta with seasonal vegetables</div></div><div class="item-price">₹750</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Pasta (Spaghetti / Penne / Fusilli / Ravioli)</span><span class="tag-veg"></span><span class="tag-nonveg"></span></div><div class="item-meta">350 gm · 320–346 kcal</div><div class="item-desc">Choice of sauce: Arrabbiata · Alfredo · Bolognaise</div></div><div class="item-price">₹750</div></div>
 
-      if(currentPage > 1){
+      <div class="page-footer">Temple Café · Radisson Khajuraho · All prices inclusive of GST · No service charge</div>
+    </div>
+  </div>
 
-        currentPage--;
-        updatePage();
+  <!-- ══ PAGE 6: ASIAN KITCHEN ══════════════════════ -->
+  <div class="page">
+    <div class="menu-page" style="background: var(--navy-mid);">
+      <div class="section-header">
+        <div class="section-title">Asian Kitchen</div>
+        <div class="section-divider"></div>
+        <div class="section-sub">Wok-Tossed · Thai · Indo-Chinese Specialities</div>
+      </div>
 
-      }
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Chili Chicken</span><span class="tag-nonveg"></span></div><div class="item-meta">380 gm · 236 kcal</div><div class="item-desc">Crispy chicken tossed in spiced chili sauce</div></div><div class="item-price">₹825</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Chili Paneer</span><span class="tag-veg"></span></div><div class="item-meta">380 gm · 390 kcal</div><div class="item-desc">Crispy paneer tossed in spiced chili sauce</div></div><div class="item-price">₹775</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Sliced Fish in Oyster Sauce</span><span class="tag-nonveg"></span></div><div class="item-meta">380 gm · 245 kcal</div><div class="item-desc">Tender sliced fish in classic Chinese oyster sauce</div></div><div class="item-price">₹825</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Wok-Tossed Chicken</span><span class="tag-nonveg"></span></div><div class="item-meta">380 gm · 249 kcal</div><div class="item-desc">High-heat wok preparation with Asian aromatics</div></div><div class="item-price">₹855</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Vegetable Manchurian</span><span class="tag-veg"></span></div><div class="item-meta">380 gm · 270 kcal</div><div class="item-desc">Crispy vegetable balls in spiced Manchurian sauce</div></div><div class="item-price">₹825</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Vegetable in Black Bean Sauce</span><span class="tag-veg"></span></div><div class="item-meta">380 gm · 360 kcal</div><div class="item-desc">Garden vegetables in aromatic black bean sauce</div></div><div class="item-price">₹825</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Thai Curry — Veg (Green/Red)</span><span class="tag-veg"></span></div><div class="item-meta">380 gm · 360 kcal</div><div class="item-desc">Thai curry paste with coconut milk &amp; herbs, cooked with vegetables</div></div><div class="item-price">₹720</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Thai Curry — Chicken (Green/Red)</span><span class="tag-nonveg"></span></div><div class="item-meta">380 gm · 360 kcal</div><div class="item-desc">Thai curry paste with coconut milk &amp; herbs cooked with chicken</div></div><div class="item-price">₹810</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Stir-Fried Vegetables</span><span class="tag-veg"></span></div><div class="item-meta">380 gm · 223 kcal</div><div class="item-desc">Fresh greens, baby corn and mushrooms stir-fried with Thai barbeque sauce</div></div><div class="item-price">₹725</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Pad Thai Noodles</span><span class="tag-veg"></span></div><div class="item-meta">380 gm · 490 kcal</div><div class="item-desc">Thai noodles stir-fried in sweet &amp; savoury sauce, garnished with crushed peanuts</div></div><div class="item-price">₹725</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Noodles — Veg / Egg / Chicken</span><span class="tag-veg"></span><span class="tag-nonveg"></span></div><div class="item-meta">380 gm · 490–626 kcal</div><div class="item-desc">Wok-tossed noodles — vegetable · egg · chicken</div></div><div class="item-price-range">₹725 / 825</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Fried Rice — Veg / Egg / Chicken</span><span class="tag-veg"></span><span class="tag-nonveg"></span></div><div class="item-meta">380 gm · 333 kcal</div><div class="item-desc">Classic wok-fried basmati rice with your choice of protein</div></div><div class="item-price">₹685</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Spring Rolls — Veg / Chicken</span><span class="tag-veg"></span><span class="tag-nonveg"></span></div><div class="item-meta">380 gm · 248 / 220 kcal</div><div class="item-desc">Crispy golden spring rolls — vegetable or chicken</div></div><div class="item-price-range">₹725 / 815</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Dimsum — Veg / Chicken</span><span class="tag-veg"></span><span class="tag-nonveg"></span></div><div class="item-meta">380 gm · 220 kcal</div><div class="item-desc">Stuffed assorted vegetable or chicken dumplings cooked in steaming</div></div><div class="item-price-range">₹625 / 710</div></div>
 
-    }
+      <div class="page-footer">Temple Café · Radisson Khajuraho · All prices inclusive of GST · No service charge</div>
+    </div>
+  </div>
 
-    // =========================
-    // KEYBOARD SUPPORT
-    // =========================
+  <!-- ══ PAGE 7: TANDOOR & LOCAL ════════════════════ -->
+  <div class="page">
+    <div class="menu-page" style="background: var(--section-bg-dark);">
+      <div class="section-header">
+        <div class="section-title">Tandoor &amp; Local Specialities</div>
+        <div class="section-divider"></div>
+        <div class="section-sub">Clay Oven Craftsmanship · Bundeli Heritage · Charcoal Grilled</div>
+      </div>
 
-    document.addEventListener("keydown",(e)=>{
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Ajwaini Fish Tikka</span><span class="tag-nonveg"></span></div><div class="item-meta">260 gm · 123 kcal</div><div class="item-desc">Succulent pieces of fish marinated with Indian spices and charcoal grilled</div></div><div class="item-price">₹825</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Murgh Tikka</span><span class="tag-nonveg"></span></div><div class="item-meta">280 gm · 250 kcal</div><div class="item-desc">Char grilled dices of chicken marinated with yoghurt and chef's special spices</div></div><div class="item-price">₹855</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Tandoori Chicken — Half</span><span class="tag-nonveg"></span></div><div class="item-meta">180 gm · 250 kcal</div><div class="item-desc">Chicken marinated with authentic Indian spices and charcoal grilled</div></div><div class="item-price">₹775</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Tandoori Chicken — Full</span><span class="tag-nonveg"></span></div><div class="item-meta">350 gm · 250 kcal</div><div class="item-desc">Chicken marinated with authentic Indian spices and charcoal grilled</div></div><div class="item-price">₹975</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Murgh Malai Tikka</span><span class="tag-nonveg"></span></div><div class="item-meta">280 gm · 250 kcal</div><div class="item-desc">Succulent chicken marinated in cream, mildly spiced and charcoal grilled</div></div><div class="item-price">₹855</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Chicken Kurkure Kabab</span><span class="tag-nonveg"></span></div><div class="item-meta">280 gm · 250 kcal</div><div class="item-desc">Chicken mince cooked in tandoor, stuffed with cheese and deep fried</div></div><div class="item-price">₹855</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Lamb Seekh Kebab</span><span class="tag-nonveg"></span></div><div class="item-meta">220 gm · 329 kcal</div><div class="item-desc">Minced mutton seekh marinated with special spices</div></div><div class="item-price">₹850</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Dahi ke Kabab</span><span class="tag-veg"></span></div><div class="item-meta">260 gm · 193 kcal</div><div class="item-desc">Mixture of hung curd, cheese and chopped peppers, bread crumbed and deep fried</div></div><div class="item-price">₹525</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Achari Paneer Tikka</span><span class="tag-veg"></span></div><div class="item-meta">260 gm · 215 kcal</div><div class="item-desc">Chunks of cottage cheese marinated with special spices and charcoal grilled</div></div><div class="item-price">₹725</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Beetroot Cheese ki Tikki</span><span class="tag-veg"></span></div><div class="item-meta">260 gm · 215 kcal</div><div class="item-desc">Roasted beetroot mince with Indian spices stuffed with cheese, served with charmola chutney</div></div><div class="item-price">₹625</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Hara Bhara Kebab</span><span class="tag-veg"></span></div><div class="item-meta">260 gm · 160 kcal</div><div class="item-desc">Roasted split gram, spinach, peas &amp; mixed vegetable blended with Indian herbs</div></div><div class="item-price">₹625</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Sabudana Seekh Kebab</span><span class="tag-veg"></span></div><div class="item-meta">260 gm · 160 kcal</div><div class="item-desc">Minced vegetable and sabudana with spices, coating of sesame seeds</div></div><div class="item-price">₹625</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Non-Vegetarian Platter</span><span class="tag-nonveg"></span></div><div class="item-meta">380 gm · 360 kcal</div><div class="item-desc">Assorted platter of bar-be-que chicken, lamb seekh and fish tikka</div></div><div class="item-price">₹975</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Vegetarian Platter</span><span class="tag-veg"></span></div><div class="item-meta">360 gm · 180 kcal</div><div class="item-desc">Assorted platter of paneer, sabudana seekh, dahi kabab and hara bhara kebab</div></div><div class="item-price">₹825</div></div>
 
-      if(e.key === "ArrowRight"){
-        nextPage();
-      }
+      <div class="page-footer">Temple Café · Radisson Khajuraho · All prices inclusive of GST · No service charge</div>
+    </div>
+  </div>
 
-      if(e.key === "ArrowLeft"){
-        prevPage();
-      }
+  <!-- ══ PAGE 8: HERITAGE CURRIES ══════════════════ -->
+  <div class="page">
+    <div class="menu-page" style="background: #110e08;">
+      <div class="section-header" style="background: linear-gradient(180deg, #1a1408 0%, transparent 100%);">
+        <div class="section-title" style="color: #d4a017;">Heritage Curries &amp; Gravies</div>
+        <div class="section-divider" style="background: linear-gradient(90deg, transparent, rgba(212,160,23,0.5), transparent);"></div>
+        <div class="section-sub">Bundeli Signatures · Slow-Cooked Regional Perfection</div>
+      </div>
 
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Machhli Bundeli</span><span class="tag-nonveg"></span></div><div class="item-meta">400 gm · 241 kcal</div><div class="item-desc">Fresh fish cooked in signature local Bundeli style</div></div><div class="item-price">₹895</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Chicken Bundeli</span><span class="tag-nonveg"></span></div><div class="item-meta">400 gm · 241 kcal</div><div class="item-desc">Fresh curry cut chicken cooked in signature Bundeli style</div></div><div class="item-price">₹895</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Goan Fish Curry</span><span class="tag-nonveg"></span></div><div class="item-meta">400 gm · 241 kcal</div><div class="item-desc">Fish chunks tempered with mustard, traditional spices and coconut milk</div></div><div class="item-price">₹895</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Murgh Makhan Wala</span><span class="tag-nonveg"></span></div><div class="item-meta">400 gm · 520 kcal</div><div class="item-desc">Tender pieces of chicken roasted in clay oven, finished in a rich tomato gravy</div></div><div class="item-price">₹895</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Chicken Curry</span><span class="tag-nonveg"></span></div><div class="item-meta">400 gm · 280 kcal</div><div class="item-desc">Traditional homemade chicken gravy with aromatic spices</div></div><div class="item-price">₹895</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Murgh Patiala</span><span class="tag-nonveg"></span></div><div class="item-meta">400 gm · 426 kcal</div><div class="item-desc">Stuffed chicken breast served with creamy rich gravy garnished with boiled eggs</div></div><div class="item-price">₹895</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Rogan Josh</span><span class="tag-nonveg"></span></div><div class="item-meta">400 gm · 430 kcal</div><div class="item-desc">Tender lamb curry cooked with spices — a Kashmiri specialty</div></div><div class="item-price">₹995</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Lal Maas</span><span class="tag-nonveg"></span></div><div class="item-meta">400 gm · 480 kcal</div><div class="item-desc">Tender lamb with bone cooked with exotic herbs, Rajasthani chili and spices in a rich lamb broth</div></div><div class="item-price">₹995</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Rara Gosht</span><span class="tag-nonveg"></span></div><div class="item-meta">420 gm · 440 kcal</div><div class="item-desc">Tender lamb pieces pot roasted with minced lamb and spices</div></div><div class="item-price">₹995</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Sam Savera Kofta Curry</span><span class="tag-veg"></span><span class="tag-signature">✦</span></div><div class="item-meta">400 gm · 200 kcal</div><div class="item-desc">Radisson signature — spinach &amp; cottage cheese dumpling in onion tomato gravy</div></div><div class="item-price">₹825</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Paneer Butter Masala</span><span class="tag-veg"></span></div><div class="item-meta">400 gm · 440 kcal</div><div class="item-desc">Cottage cheese cooked with rich tomato cashew gravy and butter</div></div><div class="item-price">₹725</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Kadahi Paneer</span><span class="tag-veg"></span></div><div class="item-meta">400 gm · 440 kcal</div><div class="item-desc">Cottage cheese simmered in tomato gravy with capsicum, flavoured with fenugreek</div></div><div class="item-price">₹725</div></div>
+
+      <div class="page-footer">Temple Café · Radisson Khajuraho · All prices inclusive of GST · No service charge</div>
+    </div>
+  </div>
+
+  <!-- ══ PAGE 9: INDIAN VEG MAINS ══════════════════ -->
+  <div class="page">
+    <div class="menu-page veg-theme">
+      <div class="section-header">
+        <div class="section-title">Indian Vegetarian Mains</div>
+        <div class="section-divider"></div>
+        <div class="section-sub">Wholesome · Spiced · Purely Vegetarian</div>
+      </div>
+
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Paneer Saag Wala</span><span class="tag-veg"></span></div><div class="item-meta">400 gm · 380 kcal</div><div class="item-desc">Fresh spinach puree cooked home style with fresh cottage cheese</div></div><div class="item-price">₹725</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Makkai Khumb Mutter</span><span class="tag-veg"></span></div><div class="item-meta">400 gm · 220 kcal</div><div class="item-desc">Corn, mushroom &amp; peas cooked with Indian spices</div></div><div class="item-price">₹725</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Hing Dhania ke Chatpate Aloo</span><span class="tag-veg"></span></div><div class="item-meta">350 gm · 174 kcal</div><div class="item-desc">Potato cubes tempered with cumin and spices</div></div><div class="item-price">₹525</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Aloo Gobhi Adraki</span><span class="tag-veg"></span></div><div class="item-meta">350 gm · 120 kcal</div><div class="item-desc">Potatoes and cauliflower tossed in a kadhai, redolent of fresh coriander and cumin</div></div><div class="item-price">₹525</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Bundeli Kadhi Pakori</span><span class="tag-veg"></span></div><div class="item-meta">350 gm · 120 kcal</div><div class="item-desc">Gram flour cooked with yogurt with local spices and herbs</div></div><div class="item-price">₹550</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Bundeli Baigain Bharta</span><span class="tag-veg"></span></div><div class="item-meta">350 gm · 120 kcal</div><div class="item-desc">Minced roasted eggplant with tomato, onion and herbs</div></div><div class="item-price">₹550</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Aaj ki Subzi</span><span class="tag-veg"></span></div><div class="item-meta">350 gm · 130 kcal</div><div class="item-desc">Vegetable of the day — freshly prepared</div></div><div class="item-price">₹525</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Lasooni Dal Tadka</span><span class="tag-veg"></span></div><div class="item-meta">400 gm · 323 kcal</div><div class="item-desc">Melange of split yellow lentils tempered with royal cumin and garlic</div></div><div class="item-price">₹585</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Dal Makhani</span><span class="tag-veg"></span></div><div class="item-meta">400 gm · 370 kcal</div><div class="item-desc">Black lentils finished with cream and butter</div></div><div class="item-price">₹650</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Pulao</span><span class="tag-veg"></span></div><div class="item-meta">271 kcal</div><div class="item-desc">Choice of: Kashmiri / Vegetable / Peas / Jeera</div></div><div class="item-price">₹475</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Biryani — Vegetable</span><span class="tag-veg"></span></div><div class="item-meta">380 gm · 210 kcal</div><div class="item-desc">Fragrant layered dum biryani with seasonal vegetables</div></div><div class="item-price">₹775</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Biryani — Chicken</span><span class="tag-nonveg"></span></div><div class="item-meta">480 gm · 348 kcal</div><div class="item-desc">Slow-cooked dum biryani with succulent chicken</div></div><div class="item-price">₹875</div></div>
+
+      <div class="page-footer">Temple Café · Radisson Khajuraho · All prices inclusive of GST · No service charge</div>
+    </div>
+  </div>
+
+  <!-- ══ PAGE 10: RICE, BREADS ══════════════════════ -->
+  <div class="page">
+    <div class="menu-page" style="background: var(--navy-mid);">
+      <div class="section-header">
+        <div class="section-title">Rice, Breads &amp; Accompaniments</div>
+        <div class="section-divider"></div>
+        <div class="section-sub">Fragrant · Tandoor-Baked · The Perfect Companions</div>
+      </div>
+
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Biryani — Mutton</span><span class="tag-nonveg"></span></div><div class="item-meta">480 gm · 395 kcal</div><div class="item-desc">Royal dum biryani with tender bone-in mutton</div></div><div class="item-price">₹975</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Steamed Rice</span><span class="tag-veg"></span></div><div class="item-meta">200 gm · 271 kcal</div><div class="item-desc">Light, fluffy steamed basmati rice</div></div><div class="item-price">₹275</div></div>
+
+      <div class="cat-label">Selection of Indian Breads</div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Naan / Tandoori Roti / Parantha / Kulcha</span><span class="tag-veg"></span></div><div class="item-meta">60 gm · 165 kcal</div><div class="item-desc">Choice of Indian bread freshly baked in the tandoor. Naan available plain, butter, garlic, stuffed (aloo/paneer)</div></div><div class="item-price">₹140</div></div>
+
+      <div class="cat-label">Accompaniments</div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Raita</span><span class="tag-veg"></span></div><div class="item-meta">220 gm · 210 kcal</div><div class="item-desc">Choice of: mixed vegetables / boondi / plain yoghurt / cucumber</div></div><div class="item-price">₹300</div></div>
+
+      <div class="page-footer">Temple Café · Radisson Khajuraho · All prices inclusive of GST · No service charge</div>
+    </div>
+  </div>
+
+  <!-- ══ PAGE 11: DESSERTS ══════════════════════════ -->
+  <div class="page">
+    <div class="menu-page" style="background: #14080c;">
+      <div class="section-header">
+        <div class="section-title" style="color: #d4829a;">Desserts</div>
+        <div class="section-divider" style="background: linear-gradient(90deg, transparent, rgba(212,130,154,0.4), transparent);"></div>
+        <div class="section-sub">Sweet Conclusions · Artisan Pastries &amp; Indian Classics</div>
+      </div>
+
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Chocolate Brownie with Vanilla Ice Cream</span><span class="tag-nonveg"></span></div><div class="item-meta">90 gm · 263 kcal</div><div class="item-desc">Warm chocolate brownie served with a scoop of vanilla ice cream</div></div><div class="item-price">₹675</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Chocolate Mousse</span><span class="tag-nonveg"></span></div><div class="item-meta">90 gm · 178 kcal</div><div class="item-desc">Dessert of dark chocolate and cream</div></div><div class="item-price">₹575</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Crème Caramel</span><span class="tag-nonveg"></span></div><div class="item-meta">80 gm · 222 kcal</div><div class="item-desc">Classic French caramel custard</div></div><div class="item-price">₹575</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Baked Cheese Cake</span><span class="tag-veg"></span><span class="tag-healthy">H</span></div><div class="item-meta">80 gm · 280 kcal</div><div class="item-desc">Sugar free — served with choice of sauce: blueberry, mango, strawberry</div></div><div class="item-price">₹675</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Hot Fudge Sundae</span><span class="tag-veg"></span></div><div class="item-meta">80 gm · 423 kcal</div><div class="item-desc">Cut fruits topped with ice cream and chocolate sauce</div></div><div class="item-price">₹575</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Gulab Jamun</span><span class="tag-veg"></span></div><div class="item-meta">70 gm · 240 kcal</div><div class="item-desc">Soft cottage cheese &amp; khoya dumplings soaked in sugar syrup</div></div><div class="item-price">₹525</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Fruit Platter</span><span class="tag-veg"></span><span class="tag-healthy">H</span></div><div class="item-meta">180 gm · 130 kcal</div><div class="item-desc">Seasonal fresh fruits, artfully presented</div></div><div class="item-price">₹525</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Choice of Ice Cream</span><span class="tag-veg"></span></div><div class="item-meta">80 gm · 266 kcal</div><div class="item-desc">Please ask your server for flavours available</div></div><div class="item-price">₹375</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Dessert of the Day</span><span class="tag-veg"></span></div><div class="item-meta">80 gm · 240 kcal</div><div class="item-desc">Please ask your server</div></div><div class="item-price">₹525</div></div>
+
+      <div class="page-footer">Temple Café · Radisson Khajuraho · All prices inclusive of GST · No service charge</div>
+    </div>
+  </div>
+
+  <!-- ══ PAGE 12: MOCKTAILS & COOLERS ══════════════ -->
+  <div class="page">
+    <div class="menu-page" style="background: #070f1a;">
+      <div class="section-header">
+        <div class="section-title" style="color: #6ab3d4;">Mocktails &amp; Coolers</div>
+        <div class="section-divider" style="background: linear-gradient(90deg, transparent, rgba(106,179,212,0.4), transparent);"></div>
+        <div class="section-sub">Artisan Non-Alcoholic Cocktails · 1 Portion = 300 ml</div>
+      </div>
+
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Coffee Banana Cooler</span></div><div class="item-meta">300 ml · 346 kcal</div><div class="item-desc">Milk, coffee, vanilla ice cream, banana</div></div><div class="item-price">₹475</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Tango</span></div><div class="item-meta">300 ml · 168 kcal</div><div class="item-desc">Fizzy ginger syrup, lime juice &amp; orange juice</div></div><div class="item-price">₹475</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Orange Passion</span></div><div class="item-meta">300 ml · 186 kcal</div><div class="item-desc">Mirinda, passion fruit syrup &amp; lime juice</div></div><div class="item-price">₹475</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Guava Mary</span></div><div class="item-meta">300 ml · 136 kcal</div><div class="item-desc">An exotic drink with spicy guava</div></div><div class="item-price">₹475</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Pink Squirrel</span></div><div class="item-meta">300 ml · 120 kcal</div><div class="item-desc">7up, lime juice, rose syrup</div></div><div class="item-price">₹570</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Pineapple Breeze</span></div><div class="item-meta">300 ml · 98 kcal</div><div class="item-desc">A colourful treat of pineapple &amp; apple</div></div><div class="item-price">₹475</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Twister</span></div><div class="item-meta">300 ml · 107 kcal</div><div class="item-desc">An interesting combination of mango, lemon &amp; fresh mint</div></div><div class="item-price">₹475</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Angel's Smile</span></div><div class="item-meta">300 ml · 115 kcal</div><div class="item-desc">A delightful blend of fruit juices</div></div><div class="item-price">₹475</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Virgin Pina Colada</span></div><div class="item-meta">300 ml · 170 kcal</div><div class="item-desc">Classic pineapple juice, coconut milk &amp; cream</div></div><div class="item-price">₹475</div></div>
+
+      <div class="cat-label">Healthy Treats</div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Khajuraho Rejuvenation</span><span class="tag-healthy">H</span></div><div class="item-meta">300 ml · 115 kcal</div><div class="item-desc">Fresh banana, kiwi, mango juice and orange juice</div></div><div class="item-price">₹575</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Moksham</span><span class="tag-healthy">H</span></div><div class="item-meta">300 ml · 120 kcal</div><div class="item-desc">Tulsi, ginger, honey churned with fresh sweet lime juice</div></div><div class="item-price">₹475</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Melon Cooler</span><span class="tag-healthy">H</span></div><div class="item-meta">300 ml · 130 kcal</div><div class="item-desc">Fresh watermelon juice, ginger, and mint</div></div><div class="item-price">₹475</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Crocodile Cooler</span><span class="tag-healthy">H</span></div><div class="item-meta">300 ml · 130 kcal</div><div class="item-desc">Healthy cool drink with cucumber juice balanced with honey and mint</div></div><div class="item-price">₹475</div></div>
+
+      <div class="page-footer">Temple Café · Radisson Khajuraho · All prices inclusive of GST · No service charge</div>
+    </div>
+  </div>
+
+  <!-- ══ PAGE 13: BEVERAGES ══════════════════════════ -->
+  <div class="page">
+    <div class="menu-page" style="background: var(--navy-mid);">
+      <div class="section-header">
+        <div class="section-title">Hot Stimulants &amp; Soft Beverages</div>
+        <div class="section-divider"></div>
+        <div class="section-sub">Fine Teas · Premium Coffee · Chilled Refreshments</div>
+      </div>
+
+      <div class="cat-label">Choice of Tea — ₹175</div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Assam · Darjeeling · Earl Grey · English Breakfast · Green Tea</span></div><div class="item-meta">2 kcal per serving</div><div class="item-desc">Lemon &amp; Ginger / Mint / Cardamom / Ginger / Lemon / Masala</div></div><div class="item-price">₹175</div></div>
+
+      <div class="cat-label">Choice of Coffee — ₹225</div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Nescafe · Filter · Decaffeinated · Cappuccino · Espresso</span></div><div class="item-meta">2 kcal per serving</div></div><div class="item-price">₹225</div></div>
+
+      <div class="cat-label">Milkshakes — ₹500</div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Banana</span></div><div class="item-meta">330 ml · 230 kcal</div></div><div class="item-price">₹500</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Vanilla</span></div><div class="item-meta">330 ml · 650 kcal</div></div><div class="item-price">₹500</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Chocolate</span></div><div class="item-meta">330 ml · 358 kcal</div></div><div class="item-price">₹500</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Strawberry</span></div><div class="item-meta">330 ml · 655 kcal</div></div><div class="item-price">₹500</div></div>
+
+      <div class="cat-label">Soft Beverages</div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Pepsi / 7up / Mirinda / Coke / Sprite / Fanta</span></div><div class="item-meta">330 ml · 137 kcal</div></div><div class="item-price">₹275</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Lemon Soda</span></div><div class="item-meta">330 ml · 140 kcal</div></div><div class="item-price">₹255</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Diet Pepsi / Coke</span></div><div class="item-meta">330 ml · 0 kcal</div></div><div class="item-price">₹275</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Tonic Water</span></div><div class="item-meta">330 ml · 0 kcal</div></div><div class="item-price">₹250</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Packaged Water</span></div><div class="item-meta">330 ml · 0 kcal</div></div><div class="item-price">₹125</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Soda</span></div><div class="item-meta">330 ml · 140 kcal</div></div><div class="item-price">₹195</div></div>
+      <div class="menu-item"><div class="item-left"><div class="item-name-row"><span class="item-name">Perrier Water</span></div><div class="item-meta">330 ml · 0 kcal</div></div><div class="item-price">₹475</div></div>
+
+      <div class="page-footer">Temple Café · Radisson Khajuraho · All prices inclusive of GST · No service charge</div>
+    </div>
+  </div>
+
+  <!-- ══ PAGE 14: THANK YOU ══════════════════════════ -->
+  <div class="page">
+    <div class="thankyou">
+      <div class="corner tl"></div><div class="corner tr"></div>
+      <div class="corner bl"></div><div class="corner br"></div>
+
+      <div class="thankyou-diamond">◆</div>
+      <div class="thankyou-heading">Thank You for Dining with Us</div>
+      <div class="thankyou-sub">TEMPLE CAFÉ · RADISSON KHAJURAHO</div>
+      <div class="thankyou-rule"></div>
+
+      <div class="thankyou-hours">
+        <strong>Hours of Operation</strong><br>
+        All Day Dining: 12:00 – 22:00 hrs<br>
+        Lunch: 12:00 – 15:00 hrs<br>
+        Dinner: 19:00 – 22:30 hrs
+      </div>
+
+      <div class="thankyou-note">
+        2000 calories a day is used for general nutrition advice, but calorie needs vary.<br>
+        Additional nutrition information available upon request.<br>
+        Please alert your server to any food allergies.<br><br>
+        Prices are inclusive of applicable GST.<br>
+        We do not levy any service charge.
+      </div>
+
+      <div class="radisson-badge">◆ RADISSON ◆</div>
+    </div>
+  </div>
+
+</div><!-- /slider -->
+
+<script>
+  const pages = document.querySelectorAll('.page');
+  const slider = document.getElementById('slider');
+  const dotsContainer = document.getElementById('nav-dots');
+  const counter = document.getElementById('page-counter');
+  const total = pages.length;
+  let current = 0;
+  let startX = 0, isDragging = false, dragDelta = 0;
+
+  const pageNames = [
+    'Cover','Salads','Soups','Sandwiches','Burgers & Pizza',
+    'International','Asian Kitchen','Tandoor','Heritage Curries',
+    'Veg Mains','Rice & Breads','Desserts','Mocktails','Beverages','Thank You'
+  ];
+
+  // Build dots
+  for (let i = 0; i < total; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'dot' + (i === 0 ? ' active' : '');
+    dot.onclick = () => goTo(i);
+    dotsContainer.appendChild(dot);
+  }
+
+  function updateUI() {
+    document.querySelectorAll('.dot').forEach((d, i) => {
+      d.classList.toggle('active', i === current);
     });
+    counter.textContent = (current + 1) + ' / ' + total;
+    slider.style.transform = `translateX(-${current * 100}vw)`;
+    document.getElementById('arrow-left').style.opacity = current === 0 ? '0.3' : '1';
+    document.getElementById('arrow-right').style.opacity = current === total - 1 ? '0.3' : '1';
+  }
 
-    // =================================================
-    // MOBILE SWIPE SUPPORT
-    // PINCH ZOOM WILL NOT CHANGE PAGE
-    // =================================================
+  function goTo(n) {
+    current = Math.max(0, Math.min(total - 1, n));
+    updateUI();
+  }
 
-    let startX = 0;
-    let startY = 0;
+  function prevPage() { goTo(current - 1); }
+  function nextPage() { goTo(current + 1); }
 
-    let isPinching = false;
+  // Touch / swipe
+  slider.addEventListener('touchstart', e => {
+    startX = e.touches[0].clientX;
+    isDragging = true;
+    slider.style.transition = 'none';
+  }, { passive: true });
 
-    document.addEventListener("touchstart",(e)=>{
+  slider.addEventListener('touchmove', e => {
+    if (!isDragging) return;
+    dragDelta = e.touches[0].clientX - startX;
+    const base = current * 100;
+    const pct = (dragDelta / window.innerWidth) * 100;
+    slider.style.transform = `translateX(calc(-${base}vw + ${dragDelta}px))`;
+  }, { passive: true });
 
-      // Detect pinch zoom
+  slider.addEventListener('touchend', () => {
+    isDragging = false;
+    slider.style.transition = 'transform 0.55s cubic-bezier(0.77, 0, 0.18, 1)';
+    if (dragDelta < -50) nextPage();
+    else if (dragDelta > 50) prevPage();
+    else updateUI();
+    dragDelta = 0;
+  });
 
-      if(e.touches.length > 1){
+  // Keyboard
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') nextPage();
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') prevPage();
+  });
 
-        isPinching = true;
-        return;
-
-      }
-
-      isPinching = false;
-
-      startX = e.touches[0].clientX;
-      startY = e.touches[0].clientY;
-
-    });
-
-    document.addEventListener("touchend",(e)=>{
-
-      // Prevent page change while zooming
-
-      if(isPinching){
-
-        isPinching = false;
-        return;
-
-      }
-
-      if(!e.changedTouches[0]) return;
-
-      let endX = e.changedTouches[0].clientX;
-      let endY = e.changedTouches[0].clientY;
-
-      let diffX = startX - endX;
-      let diffY = startY - endY;
-
-      // Ignore vertical movement
-
-      if(Math.abs(diffX) > Math.abs(diffY)){
-
-        // LEFT SWIPE
-
-        if(diffX > 50){
-          nextPage();
-        }
-
-        // RIGHT SWIPE
-
-        if(diffX < -50){
-          prevPage();
-        }
-
-      }
-
-    });
-
-  </script>
-
+  // Init
+  updateUI();
+</script>
 </body>
-
 </html>
